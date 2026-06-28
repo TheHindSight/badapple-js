@@ -6,6 +6,11 @@ All rendering goes through one shared "forms" API, so every app is a thin page
 that just picks a form and a theme.
 
 ## Quick start
+CDN:
+`<script src="https://thehindsight.github.io/badapple-js/shared/"></script>`
+
+
+
 
 No build step. Open the files in a modern Chromium or Firefox browser.
 
