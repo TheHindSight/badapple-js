@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TI-84 Calculator — Bad Apple!!</title>
+<style>
+  html,body{margin:0;height:100%;background:#1a1f12;color:#dfe3ea;font:14px system-ui,'Segoe UI',sans-serif;overflow:hidden}
+  .topbar{position:fixed;top:0;left:0;right:0;height:42px;display:flex;align-items:center;gap:10px;
+    padding:0 14px;background:rgba(0,0,0,.5);border-bottom:1px solid rgba(255,255,255,.12);
+    z-index:2147483600;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .topbar a{color:#9fb0c4;text-decoration:none;font-weight:600}
+  .topbar a:hover{color:#fff}
+  .topbar .dot{width:10px;height:10px;border-radius:50%;background:#7cb342}
+  .topbar .t{font-weight:700;color:#7cb342}
+  .topbar .tag{color:#7a8599;margin-left:auto;font-size:12.5px}
+  #stage{position:fixed;left:0;right:0;top:42px;bottom:0}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="../../index.html">← Gallery</a>
+  <span class="dot"></span><span class="t">TI-84 Calculator</span>
+  <span class="tag">96×64 graphing LCD</span>
+</div>
+<div id="stage"></div>
+<script>window.BADAPPLE_OPTS = {"form":"ascii","target":"stage","cols":120,"rows":64};</script>
+<script src="../../shared/frames-data.js"></script>
+<script src="../../shared/badapple.js"></script>
+<script src="../../shared/badapple-anywhere.js"></script>
+</body>
+</html>

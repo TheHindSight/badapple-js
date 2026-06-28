@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bad Apple!! — but it's everything</title>
+<style>
+  :root{
+    --bg:#0a0b0f; --panel:#14161d; --panel2:#1b1e27; --line:#272b36;
+    --ink:#eef1f7; --dim:#9aa3b2; --accent:#e8e8e8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:
+     radial-gradient(1200px 700px at 50% -10%, #1a1d27 0%, var(--bg) 60%) fixed;
+     color:var(--ink);
+     font-family:"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+  header{
+    padding:34px 24px 10px; text-align:center;
+  }
+  h1{
+    margin:0; font-weight:800; letter-spacing:-.5px;
+    font-size:clamp(28px,5vw,52px);
+    background:linear-gradient(90deg,#fff,#9aa3b2);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--dim);margin:8px auto 0;max-width:680px;font-size:15px;line-height:1.5}
+  .sub b{color:#fff}
+  .toolbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;
+    padding:14px; margin:14px auto 4px; max-width:980px;
+    background:rgba(20,22,29,.72);backdrop-filter:blur(8px);
+    border:1px solid var(--line);border-radius:14px;
+  }
+  .toolbar button, .toolbar .seg{
+    background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer;font-weight:600;
+  }
+  .toolbar button:hover{border-color:#3a4150;background:#222633}
+  .toolbar input[type=range]{width:min(38vw,360px);accent-color:#8ab4f8}
+  .time{font-variant-numeric:tabular-nums;color:var(--dim);font-size:13px;min-width:110px;text-align:center}
+  main{max-width:1280px;margin:18px auto 60px;padding:0 18px}
+  .grid{
+    display:grid;gap:18px;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  }
+  .card{
+    position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    background:var(--panel); transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease;
+    display:block;
+  }
+  .card:hover{transform:translateY(-4px);border-color:#3d4350;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+  .screen{position:relative;aspect-ratio:4/3;background:#05060a;display:block;width:100%}
+  .screen canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:block}
+  .badge{
+    position:absolute;left:10px;top:10px;z-index:2;font-size:11px;font-weight:700;
+    letter-spacing:.4px;padding:3px 8px;border-radius:999px;
+    background:rgba(0,0,0,.45);backdrop-filter:blur(3px);color:#fff;border:1px solid rgba(255,255,255,.14);
+  }
+  .open{
+    position:absolute;right:10px;bottom:10px;z-index:2;font-size:12px;font-weight:700;
+    padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.18);
+    opacity:0;transform:translateY(6px);transition:.15s;
+  }
+  .card:hover .open{opacity:1;transform:none}
+  .meta{padding:12px 14px 14px}
+  .meta .title{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .meta .tag{color:var(--dim);font-size:12.5px;margin-top:3px}
+  footer{color:var(--dim);text-align:center;font-size:12.5px;padding:26px;line-height:1.7}
+  .note{color:#c9923b;font-size:12.5px;text-align:center;margin-top:6px}
+  #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:var(--bg);z-index:50;flex-direction:column;gap:14px;font-size:15px;color:var(--dim)}
+  .spin{width:26px;height:26px;border:3px solid #2a2f3a;border-top-color:#8ab4f8;border-radius:50%;animation:s 1s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="loading"><div class="spin"></div><div>Decoding Bad Apple!! frames…</div></div>
+
+<header>
+  <h1>Bad Apple!! — but it's everything</h1>
+  <p class="sub">The real 3:39 animation, decoded once and replayed inside <b id="count">34</b> reimagined app interfaces.
+  Every tile below is <b>live</b>. Click one to open the full app.</p>
+</header>
+
+<div class="toolbar">
+  <button id="pp">⏸ Pause</button>
+  <input id="seek" type="range" min="0" max="1000" value="0" />
+  <span class="time" id="time">0:00 / 3:39</span>
+  <button id="snd">♪ Music: off</button>
+</div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  Frames extracted from the source video with OpenCV, packed 1-bit, XOR-delta + gzip + base64 (~1&nbsp;MB) and decoded in-browser via <code>DecompressionStream</code>.<br/>
+  Bad Apple!! is by Alstroemeria Records (Touhou arrange). This is a fan / technical homage — open in a modern Chromium or Firefox browser.
+  <div class="note" id="filenote"></div>
+</footer>
+
+<script src="shared/frames-data.js"></script>
+<script src="shared/badapple.js"></script>
+<script>
+const APPS = [
+  {slug:'terminal',      title:'Terminal',         tag:'ASCII art in a CRT shell',       accent:'#33ff66'},
+  {slug:'google-maps',   title:'Google Maps',      tag:'Silhouette as city blocks',      accent:'#4285f4'},
+  {slug:'chess',         title:'Chess',            tag:'Pieces become pixels',           accent:'#d9a066'},
+  {slug:'minesweeper',   title:'Minesweeper',      tag:'A mine in every dark cell',      accent:'#e53935'},
+  {slug:'spreadsheet',   title:'Spreadsheet',      tag:'Conditional formatting',         accent:'#0f9d58'},
+  {slug:'file-explorer', title:'File Explorer',    tag:'Marching file selection',        accent:'#2b88d8'},
+  {slug:'game-of-life',  title:"Conway's Life",    tag:'Cells flicker alive',            accent:'#18e0c8'},
+  {slug:'vscode',        title:'VS Code',          tag:'Watch the minimap',              accent:'#3aa0ff'},
+  {slug:'discord',       title:'Discord',          tag:'Pixel-canvas embed',             accent:'#5865f2'},
+  {slug:'matrix',        title:'Matrix Rain',      tag:'A figure in the rain',           accent:'#00ff41'},
+  {slug:'stocks',        title:'Trading Terminal', tag:'Live market heatmap',            accent:'#ffae00'},
+  {slug:'piano-roll',    title:'Piano Roll',       tag:'Made of MIDI notes',             accent:'#19c37d'},
+  {slug:'weather-radar', title:'Weather Radar',    tag:'Doppler silhouette',             accent:'#ff5252'},
+  {slug:'launchpad',     title:'RGB Launchpad',    tag:'Pads light up and dance',        accent:'#ff2d95'},
+  {slug:'cctv',          title:'CCTV Feed',        tag:'CAM 04 • ● REC',                 accent:'#66ff99'},
+  {slug:'ms-paint',      title:'MS Paint',         tag:'Drawn in black & white',         accent:'#ffffff'},
+  {slug:'oscilloscope',  title:'Oscilloscope',     tag:'Phosphor beam & persistence',    accent:'#38f08a'},
+  {slug:'subway-map',    title:'Subway Map',       tag:'Stations form the figure',       accent:'#ff7a1a'},
+  {slug:'youtube',       title:'YouTube',          tag:"It's literally YouTube",          accent:'#ff3d3d'},
+  {slug:'gameboy',       title:'Game Boy',         tag:'Native 160×144 DMG green',        accent:'#9bbc0f'},
+  {slug:'windows-xp',    title:'Windows XP',       tag:'Bliss + Media Player',            accent:'#4aa3ff'},
+  {slug:'ios-home',      title:'iOS Home Screen',  tag:'Icons form the figure',           accent:'#0a84ff'},
+  {slug:'split-flap',    title:'Split-Flap Board', tag:'Departures board flips',          accent:'#f5c518'},
+  {slug:'scoreboard',    title:'Scoreboard',       tag:'Stadium LED jumbotron',           accent:'#ff7b00'},
+  {slug:'ti-calculator', title:'TI-84 Calculator', tag:'96×64 graphing LCD',              accent:'#7cb342'},
+  {slug:'nokia-3310',    title:'Nokia 3310',       tag:'84×48 · Snake included',          accent:'#8fbf3f'},
+  {slug:'hex-editor',    title:'Hex Editor',       tag:'Hidden in the bytes',             accent:'#4ec9b0'},
+  {slug:'qr-code',       title:'QR Code',          tag:'Scannable-ish modules',           accent:'#ffffff'},
+  {slug:'winamp',        title:'Winamp',           tag:"Whips the llama's ass",           accent:'#b6ff00'},
+  {slug:'tiktok',        title:'TikTok',           tag:'Vertical, with hearts',           accent:'#fe2c55'},
+  {slug:'lite-brite',    title:'Lite-Brite',       tag:'Glowing pegboard',                accent:'#ff4fd8'},
+  {slug:'etch-a-sketch', title:'Etch A Sketch',    tag:'Etched in aluminum',              accent:'#e23b3b'},
+  {slug:'crt-tv',        title:'CRT Television',   tag:'Curved glass + static',           accent:'#62d0ff'},
+  {slug:'zoom',          title:'Zoom Call',        tag:'12 tiles, one figure',            accent:'#2d8cff'},
+];
+
+function hexToRgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+
+document.getElementById('count').textContent = APPS.length;
+
+const grid = document.getElementById('grid');
+const tiles = [];
+const TC = 64, TR = 48;
+for (const a of APPS){
+  const card = document.createElement('a');
+  card.className = 'card';
+  card.href = 'apps/' + a.slug + '/index.html';
+  const rgb = hexToRgb(a.accent);
+  card.innerHTML =
+    '<div class="screen"><span class="badge">'+a.title+'</span>'+
+    '<canvas width="'+TC+'" height="'+TR+'"></canvas>'+
+    '<span class="open">Open ↗</span></div>'+
+    '<div class="meta"><div class="title"><span class="dot" style="background:'+a.accent+'"></span>'+a.title+'</div>'+
+    '<div class="tag">'+a.tag+'</div></div>';
+  grid.appendChild(card);
+  const cv = card.querySelector('canvas');
+  const ctx = cv.getContext('2d');
+  const img = ctx.createImageData(TC, TR);
+  tiles.push({rgb, ctx, img});
+}
+
+function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+String(s).padStart(2,'0');}
+
+let audio = null, player = null;
+const ppBtn = document.getElementById('pp');
+const seek = document.getElementById('seek');
+const timeEl = document.getElementById('time');
+const sndBtn = document.getElementById('snd');
+let seeking = false;
+
+const covBuf = new Float32Array(TC*TR);
+function drawAll(f){
+  const cov = BadApple.sampleCoverage(TC, TR, f, covBuf);
+  for (const t of tiles){
+    const d = t.img.data, [r,g,b] = t.rgb;
+    for (let i=0;i<cov.length;i++){
+      const v = cov[i];              // 0..1 ink coverage
+      const j = i*4;
+      d[j]   = (10 + r*v)|0;
+      d[j+1] = (11 + g*v)|0;
+      d[j+2] = (15 + b*v)|0;
+      d[j+3] = 255;
+    }
+    t.ctx.putImageData(t.img, 0, 0);
+  }
+}
+
+BadApple.load().then(meta => {
+  document.getElementById('loading').style.display = 'none';
+  player = BadApple.createPlayer({
+    sound: false,            // the gallery uses its own ♪ Music button
+    onFrame(f, t){
+      drawAll(f);
+      if (!seeking) seek.value = String(Math.round(t / meta.duration * 1000));
+      timeEl.textContent = fmt(t) + ' / ' + fmt(meta.duration);
+    }
+  });
+  player.play();
+
+  ppBtn.onclick = () => { player.toggle(); ppBtn.textContent = player.isPlaying() ? '⏸ Pause' : '▶ Play'; };
+  seek.addEventListener('input', () => { seeking = true; player.seek(seek.value/1000 * meta.duration); });
+  seek.addEventListener('change', () => { seeking = false; });
+  sndBtn.onclick = () => {
+    if (!audio){
+      audio = BadApple.makeAudio('shared/bad_apple.mp4');
+      player.setAudio(audio);
+      if (player.isPlaying()) audio.play().catch(()=>{});
+      sndBtn.textContent = '♪ Music: on';
+    } else {
+      const on = audio.paused;
+      if (on){ audio.play().catch(()=>{}); sndBtn.textContent='♪ Music: on'; }
+      else { audio.pause(); sndBtn.textContent='♪ Music: off'; }
+    }
+  };
+}).catch(err => {
+  document.getElementById('loading').innerHTML = '<div style="max-width:480px;text-align:center">Could not decode frames:<br>'+err+'<br><br>Use a recent Chromium/Firefox browser (needs DecompressionStream).</div>';
+});
+
+if (location.protocol === 'file:'){
+  document.getElementById('filenote').textContent = 'Tip: opened via file:// — everything works offline; if a browser blocks local audio, serve the folder with any static web server.';
+}
+</script>
+</body>
+</html>
