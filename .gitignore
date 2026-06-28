@@ -9,7 +9,7 @@ node_modules/
 # Funny little removals
 BadApple_Mario
 badapple-terminal
-
+page/
 # OS / editor cruft
 .DS_Store
 Thumbs.db

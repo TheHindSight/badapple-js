@@ -124,6 +124,7 @@
     return sharedAudio;
   }
   function ensureHint() {
+    if (global.BADAPPLE_NO_HINT) return;
     if (hintEl || !document.body) return;
     hintEl = document.createElement("div");
     hintEl.textContent = "🔊 click anywhere for sound";

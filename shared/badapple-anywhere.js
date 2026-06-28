@@ -60,6 +60,10 @@
     return;
   }
 
+  // No UI at all: suppress the engine's "click for sound" hint. Audio still
+  // unlocks silently on the first user gesture (browser autoplay policy).
+  global.BADAPPLE_NO_HINT = true;
+
   // ---- locate the shared engine ---------------------------------------------
   var SELF = (document.currentScript && document.currentScript.src) || "";
   var DIR = global.BADAPPLE_BASE ||
@@ -163,14 +167,8 @@
     var w = (prefSize && prefSize[0]) || 360, h = (prefSize && prefSize[1]) || 270;
     var box = el("div",
       "position:fixed;right:18px;bottom:18px;z-index:" + (Z + 5) + ";width:" + w + "px;height:" + h + "px;" +
-      "background:#000;border:1px solid #333;border-radius:10px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.6);");
-    var bar = el("div",
-      "position:absolute;top:0;left:0;right:0;height:20px;background:#161616;color:#999;" +
-      "font:11px system-ui,sans-serif;display:flex;align-items:center;padding:0 8px;z-index:2;", box);
-    bar.textContent = "🍎 Bad Apple";
-    var inner2 = el("div", "position:absolute;left:0;right:0;top:20px;bottom:0;overflow:hidden;", box);
-    drag(bar, box);
-    return { root: inner2, host: box, cleanup: function () { box.remove(); } };
+      "background:#000;overflow:hidden;");
+    return { root: box, host: box, cleanup: function () { box.remove(); } };
   }
 
   // ---------------------------------------------------------------------------
@@ -363,12 +361,12 @@
   });
 
   // ---------------------------------------------------------------------------
-  //  Controller + HUD
+  //  Controller (no UI — just renders + plays)
   // ---------------------------------------------------------------------------
-  var options = { form: "video", sound: true, opacity: 1, loop: true, hud: true };
+  var options = { form: "video", sound: true, opacity: 1, loop: true };
   if (global.BADAPPLE_OPTS) for (var k in global.BADAPPLE_OPTS) options[k] = global.BADAPPLE_OPTS[k];
 
-  var player = null, current = null, currentName = null, hud = null;
+  var player = null, current = null, currentName = null;
 
   function applyOpacity() {
     var h = current && current.host && current.host();
@@ -382,40 +380,6 @@
     current.start();
     if (player) current.render(player.frame());
     applyOpacity();
-    if (hud) { var mb = hud.querySelector(".ba-mode"); if (mb) mb.textContent = name; }
-    BA.fx && BA.fx.toast && BA.fx.toast("form: " + name, 850);
-  }
-
-  function buildHud() {
-    if (options.hud === false) return;
-    hud = el("div",
-      "position:fixed;right:18px;top:18px;z-index:" + (Z + 9) + ";display:flex;align-items:center;gap:4px;" +
-      "padding:5px 7px;background:rgba(12,12,16,.92);border:1px solid #333;border-radius:999px;color:#eee;" +
-      "font:600 12px system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.55);" +
-      "-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);user-select:none;");
-    function btn(txt, title, fn) {
-      var b = el("button", "all:unset;cursor:pointer;padding:3px 7px;border-radius:999px;color:#eee;line-height:1;", hud);
-      b.textContent = txt; b.title = title;
-      b.addEventListener("mouseenter", function () { b.style.background = "rgba(255,255,255,.12)"; });
-      b.addEventListener("mouseleave", function () { b.style.background = "none"; });
-      b.addEventListener("click", function (e) { e.stopPropagation(); fn(b); });
-      return b;
-    }
-    el("span", "padding:0 4px;", hud).textContent = "🍎";
-    btn("⏸", "play / pause", function (b) { player.toggle(); b.textContent = player.isPlaying() ? "⏸" : "▶"; });
-    var modeBtn = btn(currentName || options.form, "cycle form", function () {
-      var names = Object.keys(registry);
-      var ordered = BUILTIN_ORDER.filter(function (n) { return registry[n]; })
-        .concat(names.filter(function (n) { return BUILTIN_ORDER.indexOf(n) < 0; }));
-      var i = ordered.indexOf(currentName);
-      setForm(ordered[(i + 1) % ordered.length]);
-    });
-    modeBtn.classList.add("ba-mode");
-    btn("🔊", "enable / sync sound", function () { BA.enableSound(); var a = BA.audioElement(); a.muted = false; a.play && a.play().catch(function () {}); });
-    btn("–", "less opaque", function () { options.opacity = Math.max(0.1, options.opacity - 0.15); applyOpacity(); });
-    btn("+", "more opaque", function () { options.opacity = Math.min(1, options.opacity + 0.15); applyOpacity(); });
-    btn("✕", "stop", function () { api.stop(); });
-    drag(hud, hud);
   }
 
   // ---------------------------------------------------------------------------
@@ -438,7 +402,6 @@
       api.__live = false;
       try { player && player.pause(); } catch (e) {}
       try { current && current.stop(); } catch (e) {}
-      try { hud && hud.remove(); } catch (e) {}
       var a = BA && BA.audioElement && BA.audioElement(); if (a) try { a.pause(); } catch (e) {}
       global.BadAppleAnywhere = { __live: false, register: register };
     }
@@ -446,7 +409,6 @@
   global.BadAppleAnywhere = api;
 
   function boot() {
-    buildHud();
     player = BA.createPlayer({
       loop: options.loop !== false,
       sound: options.sound !== false,
@@ -455,7 +417,6 @@
     api.player = player;
     setForm(options.form);
     player.play();
-    BA.fx && BA.fx.toast && BA.fx.toast("🍎 Bad Apple anywhere — click for sound", 2000);
   }
 
   ensureEngine()
