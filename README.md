@@ -1,4 +1,4 @@
-# Bad Apple, but it's everything
+# Bad Apple, but it's everything (Shamelessly made by claude)
 
 The real Bad Apple!! animation, decoded once and replayed inside 34 different
 app interfaces (Minesweeper, Google Maps, a terminal, a Game Boy, and more).
